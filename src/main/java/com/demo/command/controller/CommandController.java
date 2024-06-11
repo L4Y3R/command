@@ -1,20 +1,26 @@
 package com.demo.command.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.demo.command.service.CommandService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/cmd")
 public class CommandController {
 
-    @PostMapping("/open")
-    public String open() {
-        return "Open";
+    @Autowired
+    private CommandService commandService;
+
+    @PostMapping
+    public ResponseEntity<Command> open(@RequestBody Command command) {
+        try{
+            Command savedCommand = commandService.control(command);
+            return ResponseEntity.ok(savedCommand);
+        }catch{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
-    @PostMapping("/close")
-    public String close() {
-        return "Close";
-    }
 }
