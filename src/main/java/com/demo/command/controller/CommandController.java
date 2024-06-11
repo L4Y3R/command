@@ -14,12 +14,12 @@ public class CommandController {
     private CommandService commandService;
 
     @PostMapping
-    public ResponseEntity<Command> open(@RequestBody Command command) {
+    public ResponseEntity<?> open(@RequestBody CommandDTO commandDTO) {
         try{
-            Command savedCommand = commandService.control(command);
-            return ResponseEntity.ok(savedCommand);
-        }catch{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            Command savedCommand = commandService.control(commandDTO);
+            return ResponseEntity.created(commandDTO).body("Command Successful");
+        }catch(Exception e){
+            return ResponseEntity.internalServerError().body("Command could not be completed");
         }
     }
 
