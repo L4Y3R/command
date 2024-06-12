@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommandDTO {
-    private String command;
+    private String cmdName;
     private String userId;
     private String deviceId;
 }
