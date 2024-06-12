@@ -21,5 +21,5 @@ public class Command {
     private String id;
     private String command;
     private String userId;
-    private String DeviceId;
+    private String deviceId;
 }
