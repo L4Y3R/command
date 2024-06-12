@@ -25,8 +25,8 @@ public class CommandController {
         try{
             CommandDTO savedCommand = commandService.control(commandDTO).getBody();
             return ResponseEntity.ok(savedCommand);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred. Please try again later.");
+        }catch(Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
