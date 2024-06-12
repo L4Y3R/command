@@ -2,6 +2,7 @@ package com.demo.command.service;
 
 import com.demo.command.DTO.CommandDTO;
 import com.demo.command.entity.Command;
+import com.demo.command.exception.UnknownErrorException;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class CommandService {
             commandRepo.save(modelMapper.map(commandDTO, Command.class));
             return ResponseEntity.ok(commandDTO);
         } catch (Exception e) {
-            throw new RuntimeException("Error confirming user or device");
+            throw new UnknownErrorException();
         }
     }
 
@@ -45,7 +46,7 @@ public class CommandService {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e){
-            throw new RuntimeException("Error fetching device");
+            return false;
         }
     }
 
@@ -55,7 +56,7 @@ public class CommandService {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e){
-            throw new RuntimeException("Error fetching user");
+           return false;
         }
     }
 }
