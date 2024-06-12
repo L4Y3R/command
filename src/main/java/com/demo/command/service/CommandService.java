@@ -4,7 +4,6 @@ import com.demo.command.DTO.CommandDTO;
 import com.demo.command.entity.Command;
 import com.demo.command.exception.DeviceNotAuthorizedException;
 import com.demo.command.exception.DeviceNotFoundException;
-import com.demo.command.exception.UnknownErrorException;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
