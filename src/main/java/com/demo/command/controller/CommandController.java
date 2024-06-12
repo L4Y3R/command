@@ -2,6 +2,8 @@ package com.demo.command.controller;
 
 import com.demo.command.DTO.CommandDTO;
 import com.demo.command.service.CommandService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ public class CommandController {
     @Autowired
     private CommandService commandService;
 
+    private static final Logger logger = LoggerFactory.getLogger(CommandService.class);
+
     @PostMapping("/cmd")
     public ResponseEntity<Object> cmdRequest(@RequestBody CommandDTO commandDTO) {
         try{
@@ -22,6 +26,12 @@ public class CommandController {
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
+    }
+
+    @GetMapping("/hello")
+    public String greet(){
+        logger.info("[---Request Sent---]");
+        return commandService.greet();
     }
 
 }
