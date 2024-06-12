@@ -19,7 +19,7 @@ import javax.persistence.Entity;
 public class Command {
     @Id
     private String id;
-    private String command;
-    private String userId;
-    private String deviceId;
+    private String commandName;
+    private String user;
+    private String device;
 }
