@@ -1,9 +1,12 @@
 package com.demo.command.service;
 
 import com.demo.command.DTO.CommandDTO;
+import com.demo.command.aspect.LoggingAspect;
 import com.demo.command.entity.Command;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class CommandService {
+
+//    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Autowired
     private CommandRepo commandRepo;
