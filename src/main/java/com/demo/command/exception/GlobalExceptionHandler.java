@@ -13,4 +13,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> exception(UnknownErrorException exception) {
         return new ResponseEntity<>("Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(DeviceNotAuthorizedException.class)
+    public ResponseEntity<Object> exception(DeviceNotAuthorizedException exception) {
+        return new ResponseEntity<>("A device associated with this user does not exist", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DeviceNotFoundException.class)
+    public ResponseEntity<Object> exception(DeviceNotFoundException exception) {
+        return new ResponseEntity<>("Device not found", HttpStatus.NOT_FOUND);
+    }
 }

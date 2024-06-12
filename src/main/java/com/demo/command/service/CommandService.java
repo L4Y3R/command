@@ -2,6 +2,8 @@ package com.demo.command.service;
 
 import com.demo.command.DTO.CommandDTO;
 import com.demo.command.entity.Command;
+import com.demo.command.exception.DeviceNotAuthorizedException;
+import com.demo.command.exception.DeviceNotFoundException;
 import com.demo.command.exception.UnknownErrorException;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -26,37 +29,26 @@ public class CommandService {
     private RestTemplate restTemplate;
 
     public ResponseEntity<CommandDTO> control(CommandDTO commandDTO) {
-        boolean isDeviceExist = validateDevice(commandDTO.getDevice());
-        boolean isUserExist = validateUser(commandDTO.getUser());
+        boolean isDeviceExist = validateDevice(commandDTO.getDevice(), commandDTO.getUser());
 
         try{
-            if (!isDeviceExist || !isUserExist) {
-                throw new IllegalArgumentException("Device does not exist");
+            if (!isDeviceExist) {
+                throw new DeviceNotFoundException();
             }
             commandRepo.save(modelMapper.map(commandDTO, Command.class));
             return ResponseEntity.ok(commandDTO);
         } catch (Exception e) {
-            throw new UnknownErrorException();
+            throw new DeviceNotAuthorizedException();
         }
     }
 
-    private boolean validateDevice(String deviceId) {
-        String url = "http://localhost:9000/api/v1/devices/" + deviceId;
+    private boolean validateDevice(String deviceId, String userId) {
+        String url = "http://localhost:9000/api/v1/devices/conf/?deviceId=" + deviceId + "&userId=" + userId;
         try{
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e){
             return false;
-        }
-    }
-
-    private boolean validateUser(String userId) {
-        String url = "http://localhost:9000/api/v1/users/" + userId;
-        try{
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e){
-           return false;
         }
     }
 }
