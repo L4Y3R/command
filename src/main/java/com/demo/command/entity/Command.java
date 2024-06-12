@@ -14,11 +14,12 @@ import javax.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "command")
+@Document(collection = "logs")
 
 public class Command {
     @Id
-    private String cmdName;
+    private String id;
+    private String command;
     private String userId;
-    private String DeviceId;
+    private String deviceId;
 }

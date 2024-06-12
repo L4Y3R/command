@@ -12,5 +12,5 @@ import lombok.Setter;
 public class CommandDTO {
     private String cmdName;
     private String userId;
-    private String DeviceId;
+    private String deviceId;
 }
