@@ -2,6 +2,7 @@ package com.demo.command.controller;
 
 import com.demo.command.DTO.CommandDTO;
 import com.demo.command.aspect.LoggingAspect;
+import com.demo.command.exception.UnknownErrorException;
 import com.demo.command.service.CommandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class CommandController {
             CommandDTO savedCommand = commandService.control(commandDTO).getBody();
             return ResponseEntity.ok(savedCommand);
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred. Please try again later.");
         }
     }
 
