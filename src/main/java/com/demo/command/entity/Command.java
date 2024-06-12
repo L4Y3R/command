@@ -1,4 +1,2 @@
-package com.demo.command.entity;
-
-public class Entity {
+package com.demo.command.entity;public class Command {
 }
