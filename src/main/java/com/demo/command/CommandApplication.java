@@ -9,7 +9,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableAspectJAutoProxy
 public class CommandApplication {
 
     public static void main(String[] args) {

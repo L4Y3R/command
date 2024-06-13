@@ -1,10 +1,7 @@
 package com.demo.command.controller;
 
 import com.demo.command.DTO.CommandDTO;
-import com.demo.command.aspect.LoggingAspect;
 import com.demo.command.service.CommandService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1")
 public class CommandController {
-
-    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Autowired
     private CommandService commandService;
