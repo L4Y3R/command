@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -26,6 +27,7 @@ public class CommandService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Transactional
     public ResponseEntity<CommandDTO> control(CommandDTO commandDTO) {
         boolean isDeviceExist = validateDevice(commandDTO.getDevice(), commandDTO.getUser());
 

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class CommandApplication {
 
     public static void main(String[] args) {
+        System.setProperty("spring.config.name", "command");
         SpringApplication.run(CommandApplication.class, args);
     }
 
