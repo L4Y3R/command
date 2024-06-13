@@ -4,6 +4,7 @@ import com.demo.command.DTO.CommandDTO;
 import com.demo.command.entity.Command;
 import com.demo.command.exception.DeviceNotAuthorizedException;
 import com.demo.command.exception.DeviceNotFoundException;
+import com.demo.command.interfaces.DeviceClient;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -23,20 +23,15 @@ public class CommandService {
     @Autowired
     private CommandRepo commandRepo;
 
-
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    public CommandService(CommandRepo commandRepo, ModelMapper modelMapper) {
-        this.commandRepo = commandRepo;
-        this.modelMapper = modelMapper;
-    }
+    private DeviceClient deviceClient;
 
     @Transactional
-    public ResponseEntity<CommandDTO> control(CommandDTO commandDTO) {
+    public void control(CommandDTO commandDTO) {
+        //check if the device exists with the user given
         boolean isDeviceExist = validateDevice(commandDTO.getDevice(), commandDTO.getUser());
 
         try{
@@ -45,6 +40,7 @@ public class CommandService {
             }
 
             Command command = modelMapper.map(commandDTO, Command.class);
+            //save command for log
             commandRepo.save(command);
 
             String uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -52,18 +48,19 @@ public class CommandService {
                     .buildAndExpand(command.getId())
                     .toUriString();
 
-            return ResponseEntity.created(new URI(uri)).build();
+            ResponseEntity.created(new URI(uri)).build();
         } catch (Exception e) {
             throw new DeviceNotAuthorizedException();
         }
     }
 
+    //validating with external service
     private boolean validateDevice(String deviceId, String userId) {
-        String url = "http://localhost:9000/api/v1/devices/conf/?deviceId=" + deviceId + "&userId=" + userId;
-        try{
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        try {
+            ResponseEntity<String> response = deviceClient.validateDevice(deviceId, userId);
+            //device exists with the user
             return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
