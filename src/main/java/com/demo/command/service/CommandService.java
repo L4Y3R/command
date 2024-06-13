@@ -59,7 +59,7 @@ public class CommandService {
     }
 
     private boolean validateDevice(String deviceId, String userId) {
-        String url = "http://localhost:9000/api/v1/devices/conf/?deviceId=" + deviceId + "&userId=" + userId;
+        String url = "http://demonstration/api/v1/devices/conf/?deviceId=" + deviceId + "&userId=" + userId;
         try{
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             return response.getStatusCode() == HttpStatus.OK;
