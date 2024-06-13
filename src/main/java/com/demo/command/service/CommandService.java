@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -24,23 +23,15 @@ public class CommandService {
     @Autowired
     private CommandRepo commandRepo;
 
-
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
     private DeviceClient deviceClient;
 
-    public CommandService(CommandRepo commandRepo, ModelMapper modelMapper) {
-        this.commandRepo = commandRepo;
-        this.modelMapper = modelMapper;
-    }
-
     @Transactional
-    public ResponseEntity<CommandDTO> control(CommandDTO commandDTO) {
+    public void control(CommandDTO commandDTO) {
+        //check if the device exists with the user given
         boolean isDeviceExist = validateDevice(commandDTO.getDevice(), commandDTO.getUser());
 
         try{
@@ -49,6 +40,7 @@ public class CommandService {
             }
 
             Command command = modelMapper.map(commandDTO, Command.class);
+            //save command for log
             commandRepo.save(command);
 
             String uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -56,15 +48,17 @@ public class CommandService {
                     .buildAndExpand(command.getId())
                     .toUriString();
 
-            return ResponseEntity.created(new URI(uri)).build();
+            ResponseEntity.created(new URI(uri)).build();
         } catch (Exception e) {
             throw new DeviceNotAuthorizedException();
         }
     }
 
+    //validating with external service
     private boolean validateDevice(String deviceId, String userId) {
         try {
             ResponseEntity<String> response = deviceClient.validateDevice(deviceId, userId);
+            //device exists with the user
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e) {
             return false;
