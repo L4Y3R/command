@@ -4,6 +4,7 @@ import com.demo.command.DTO.CommandDTO;
 import com.demo.command.entity.Command;
 import com.demo.command.exception.DeviceNotAuthorizedException;
 import com.demo.command.exception.DeviceNotFoundException;
+import com.demo.command.interfaces.DeviceClient;
 import com.demo.command.repository.CommandRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class CommandService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private DeviceClient deviceClient;
 
     public CommandService(CommandRepo commandRepo, ModelMapper modelMapper) {
         this.commandRepo = commandRepo;
@@ -59,11 +63,10 @@ public class CommandService {
     }
 
     private boolean validateDevice(String deviceId, String userId) {
-        String url = "http://localhost:9000/api/v1/devices/conf/?deviceId=" + deviceId + "&userId=" + userId;
-        try{
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        try {
+            ResponseEntity<String> response = deviceClient.validateDevice(deviceId, userId);
             return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
