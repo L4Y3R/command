@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 
 @Service
@@ -27,6 +30,11 @@ public class CommandService {
     @Autowired
     private RestTemplate restTemplate;
 
+    public CommandService(CommandRepo commandRepo, ModelMapper modelMapper) {
+        this.commandRepo = commandRepo;
+        this.modelMapper = modelMapper;
+    }
+
     @Transactional
     public ResponseEntity<CommandDTO> control(CommandDTO commandDTO) {
         boolean isDeviceExist = validateDevice(commandDTO.getDevice(), commandDTO.getUser());
@@ -35,8 +43,16 @@ public class CommandService {
             if (!isDeviceExist) {
                 throw new DeviceNotFoundException();
             }
-            commandRepo.save(modelMapper.map(commandDTO, Command.class));
-            return ResponseEntity.ok(commandDTO);
+
+            Command command = modelMapper.map(commandDTO, Command.class);
+            commandRepo.save(command);
+
+            String uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(command.getId())
+                    .toUriString();
+
+            return ResponseEntity.created(new URI(uri)).build();
         } catch (Exception e) {
             throw new DeviceNotAuthorizedException();
         }
