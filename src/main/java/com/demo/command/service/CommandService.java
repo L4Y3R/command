@@ -43,6 +43,7 @@ public class CommandService{
             //save command for log
             commandRepo.save(command);
 
+            //extract url
             String uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(command.getId())
