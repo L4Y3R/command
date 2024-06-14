@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-
+@EnableFeignClients
 public class CommandApplication {
 
     public static void main(String[] args) {
