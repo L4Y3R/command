@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DeviceNotAuthorizedException.class)
     public ResponseEntity<Object> exception(DeviceNotAuthorizedException exception) {
-        return new ResponseEntity<>("A device associated with this user does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("This device associated with this user does not exist", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DeviceNotFoundException.class)
