@@ -18,7 +18,7 @@ import java.net.URI;
 
 
 @Service
-public class CommandService {
+public class CommandService{
 
     @Autowired
     private CommandRepo commandRepo;
@@ -61,6 +61,7 @@ public class CommandService {
             //device exists with the user
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e) {
+            //device does not exist
             return false;
         }
     }

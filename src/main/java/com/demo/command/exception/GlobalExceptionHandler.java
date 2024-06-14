@@ -23,4 +23,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> exception(DeviceNotFoundException exception) {
         return new ResponseEntity<>("Device not found", HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(CommandNotSuccess.class)
+    public ResponseEntity<Object> exception(CommandNotSuccess exception) {
+        return new ResponseEntity<>("Command could not be completed", HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }
