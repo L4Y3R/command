@@ -1,7 +1,6 @@
 package com.demo.command.service;
 
 import com.demo.command.DTO.CommandDTO;
-import com.demo.command.entity.Command;
 import com.demo.command.exception.DeviceNotAuthorizedException;
 import com.demo.command.exception.DeviceNotFoundException;
 import com.demo.command.interfaces.DeviceClient;
@@ -13,10 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-
 
 @Service
 public class CommandService{
