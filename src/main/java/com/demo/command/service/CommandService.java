@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,6 +30,11 @@ public class CommandService{
     @Autowired
     private DeviceClient deviceClient;
 
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
+    private static final String TOPIC = "command_topic";
+
     @Transactional
     public void control(CommandDTO commandDTO) {
         //check if the device exists with the user given
@@ -39,6 +45,9 @@ public class CommandService{
                 throw new DeviceNotFoundException();
             }
 
+            sendCommand(commandDTO);
+
+            /*
             Command command = modelMapper.map(commandDTO, Command.class);
             //save command for log
             commandRepo.save(command);
@@ -50,10 +59,17 @@ public class CommandService{
                     .toUriString();
 
             ResponseEntity.created(new URI(uri)).build();
+
+             */
         } catch (Exception e) {
             throw new DeviceNotAuthorizedException();
         }
     }
+
+    public void sendCommand(CommandDTO commandData) {
+        kafkaTemplate.send(TOPIC, commandData);
+    }
+
 
     //validating with external service
     private boolean validateDevice(String deviceId, String userId) {
@@ -62,7 +78,7 @@ public class CommandService{
             //device exists with the user
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception e) {
-            //device does not exist
+            //device does not exist with the user
             return false;
         }
     }
