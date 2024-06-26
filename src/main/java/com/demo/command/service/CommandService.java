@@ -1,5 +1,6 @@
 package com.demo.command.service;
 
+import brave.Tracer;
 import com.demo.command.DTO.CommandDTO;
 import com.demo.command.exception.DeviceNotAuthorizedException;
 import com.demo.command.exception.DeviceNotFoundException;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +26,13 @@ public class CommandService{
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private static final String TOPIC = "command_topic";
-
     private static final Logger logger = LoggerFactory.getLogger(CommandService.class);
+    private final Tracer tracer;
+
+    public CommandService(KafkaTemplate<String, Object> kafkaTemplate, Tracer tracer) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.tracer = tracer;
+    }
 
     @Transactional
     public void control(CommandDTO commandDTO) {
@@ -45,7 +53,12 @@ public class CommandService{
     public void sendCommand(CommandDTO commandData) {
         try{
             logger.info("Command Sent for Execution");
-            kafkaTemplate.send(TOPIC, commandData);
+            kafkaTemplate.send(MessageBuilder.withPayload(commandData)
+                    .setHeader(KafkaHeaders.TOPIC, TOPIC)
+                    .setHeader("X-B3-TraceId", tracer.currentSpan().context().traceIdString())
+                    .setHeader("X-B3-SpanId", tracer.currentSpan().context().spanIdString())
+                    .setHeader("X-B3-ParentSpanId", tracer.currentSpan().context().parentIdString())
+                    .build());
         } catch (Exception e){
             logger.error("Command Could Not be Sent", e);
         }
